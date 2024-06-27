@@ -43,7 +43,7 @@ resource "aws_security_group" "maingroup" {
 resource "aws_instance" "server" {
   ami                    = "ami-01e444924a2233b07"
   instance_type          = "t2.micro"
-  iam_instance_profile = aws_iam_instance_profile.EC2Profile.name
+  iam_instance_profile   = aws_iam_instance_profile.ec2profile.name  # Corrected reference
   key_name               = aws_key_pair.deploy.key_name
   vpc_security_group_ids = [aws_security_group.maingroup.id]
 
@@ -60,11 +60,12 @@ resource "aws_instance" "server" {
   }
 }
 
-resource "aws_iam_instance_profile" "ec2profile" {
+resource "aws_iam_instance_profile" "ec2profile" {  # Corrected resource name
   name = "EC2-Profile"
   role = "EC2-ECR-ROLE"
 }
+
 output "instance_public_ip" {
-  value = aws_instance.server.public_ip
+  value     = aws_instance.server.public_ip
   sensitive = true
 }
