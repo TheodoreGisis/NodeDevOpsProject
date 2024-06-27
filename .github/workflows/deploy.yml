@@ -52,4 +52,11 @@ jobs:
           -var="region=${{ env.AWS_REGION }}" \
           -var="public_key=${{ secrets.AWS_SSH_KEY_PUBLIC }}" \
           -var="private_key=${{ secrets.AWS_SSH_KEY_PRIVATE }}" \
-          -var="key_name=deployer-ke
+          -var="key_name=deployer-key" \
+          -out=PLAN
+        working-directory: ./terraform
+      
+      - name: Terraform apply
+        id: apply
+        run: terraform apply PLAN
+        working-directory: ./terraform
