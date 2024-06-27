@@ -84,7 +84,7 @@ jobs:
       - name: Get Public IP from Terraform Output
         id: get_public_ip
         run: echo "Public IP: ${{ needs.deploy-infra.outputs.public_ip }}"
-        
+
       - name: Deploy image to EC2
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
