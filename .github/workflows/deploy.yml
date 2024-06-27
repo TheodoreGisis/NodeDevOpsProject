@@ -90,6 +90,6 @@ jobs:
           REGISTERY: ${{ steps.login-ecr.outputs.registery }}
           REPOSITORY: example-app
           IMAGE-TAG: ${{github.sha}}
-        runs: |-
+        run: |-
           docker build -t $REGISTERY/$REPOSITORY:$IMAGE-TAG .
           docker push $REGISTERY/$REPOSITORY:$IMAGE-TAG
