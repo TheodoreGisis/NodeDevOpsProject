@@ -75,3 +75,21 @@ jobs:
 
       - name: Use Public IP
         run: echo "The public IP is ${{ env.PUBLIC_IP }}"
+  
+  deploy-app:
+    runs-on: ubuntu-latest  
+    needs: deploy-infra
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: log to ECR 
+        id: login-ecr
+        uses: aws-action/amazon-ecr-login@v1
+      - name: Build Push Docker image
+        env:
+          REGISTERY: ${{ steps.login-ecr.outputs.registery }}
+          REPOSITORY: example-app
+          IMAGE-TAG: ${{github.sha}}
+        runs: |-
+          docker build -t $REGISTERY/$REPOSITORY:$IMAGE-TAG .
+          docker push $REGISTERY/$REPOSITORY:$IMAGE-TAG
