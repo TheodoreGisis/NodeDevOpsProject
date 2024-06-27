@@ -65,8 +65,7 @@ jobs:
         id: get_output
         run: |
           PUBLIC_IP=$(terraform output -raw instance_public_ip)
-          echo "::set-output name=public_ip::$PUBLIC_IP"
-  # deploy-app:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 
+          echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
+
+      - name: Use Public IP
+        run: echo "The public IP is ${{ env.PUBLIC_IP }}" 
