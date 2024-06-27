@@ -16,6 +16,8 @@ env:
 jobs:
   deploy-infra:
     runs-on: ubuntu-latest
+    outputs: 
+      PUBLIC_IP: ${{get_output.outputs.public_ip}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2     
@@ -81,10 +83,6 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./nodeapp
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         
-      - name: Get Public IP from Terraform Output
-        id: get_public_ip
-        run: echo "Public IP: ${{ needs.deploy-infra.outputs.public_ip }}"
-
       - name: Deploy image to EC2
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -93,7 +91,7 @@ jobs:
           AWS_DEFAULT_REGION: eu-central-1      
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ needs.deploy-infra.outputs.public_ip }}
+          host: ${{ env.PUBLIC_IP }}
           username: ubuntu  
           key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
           script: |
@@ -105,3 +103,4 @@ jobs:
             sudo docker rm myappcontainer || true
             sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
             sudo docker run -d --name myappcontainer -p 80:8080 $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
