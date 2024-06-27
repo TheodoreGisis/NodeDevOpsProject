@@ -86,7 +86,7 @@ jobs:
       - name: Deploy image to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ github.env.PUBLIC_IP }}
+          host: "3.75.172.34"
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
           script: |
