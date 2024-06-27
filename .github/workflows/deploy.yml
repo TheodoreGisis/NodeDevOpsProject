@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest  
     needs: deploy-infra
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v3
       - name: log to ECR 
         id: login-ecr
@@ -82,9 +82,8 @@ jobs:
           REPOSITORY: example-app
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./nodeapp
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-        working-directory: ./nodeapp
         
       - name: Deploy image to EC2
         env:
@@ -96,9 +95,8 @@ jobs:
         with:
           host: ${{ env.PUBLIC_IP }}
           username: ubuntu  
-          key: ${{env.AWS_SSH_KEY_PRIVATE}}
-          envs: AWS_SSH_KEY_PRIVATE,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION
-          scripts: |-
+          key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
+          script: |
             sudo apt update
             sudo apt install docker.io -y 
             sudo apt install awscli -y
@@ -106,4 +104,5 @@ jobs:
             sudo docker stop myappcontainer || true 
             sudo docker rm myappcontainer || true
             sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
-            sudo docker run -d  --name myappcontainer -p 80:8080 $REGISTRY/$REPOSITORY:$IMAGE_TAG
+            sudo docker run -d --name myappcontainer -p 80:8080 $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
