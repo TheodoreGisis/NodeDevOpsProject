@@ -90,12 +90,13 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
           script: |
-            sudo apt update
-            sudo apt install docker.io -y
-            sudo apt install awscli -y
-            sudo $(aws ecr get-login --no-include-email --region eu-central-1)
-            sudo docker stop myappcontainer || true
-            sudo docker rm myappcontainer || true
-            sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
-            sudo docker run -d --name myappcontainer -p 80:8080 $REGISTRY/$REPOSITORY:$IMAGE_TAG
+              sudo apt update
+              sudo apt install awscli -y
+              sudo update-alternatives --install /usr/bin/aws aws /usr/local/bin/aws 1
+              sudo $(aws ecr get-login --no-include-email --region eu-central-1)
+              sudo docker create --name myappcontainer $REGISTRY/$REPOSITORY:$IMAGE_TAG
+              sudo docker stop myappcontainer || true
+              sudo docker rm myappcontainer || true
+              sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
+              sudo docker run -d --name myappcontainer -p 80:8080 $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
