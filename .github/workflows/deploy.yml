@@ -17,7 +17,7 @@ jobs:
   deploy-infra:
     runs-on: ubuntu-latest
     outputs:
-      SERVER_PUBLIC_IP: 
+      SERVER_PUBLIC_IP:
         description: "The public IP address of the EC2 instance"
         value: ${{ steps.output.outputs.EC2_PUBLIC_IP }}
     steps:
