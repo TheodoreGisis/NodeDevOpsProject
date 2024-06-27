@@ -87,7 +87,6 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./nodeapp
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-       
       - name: Deploy image to EC2
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -97,7 +96,7 @@ jobs:
           AWS_DEFAULT_REGION: eu-central-1      
         uses: appleboy/ssh-action@master
         with:
-           host: ${{ env.PUBLIC_IP }}
+          host: ${{ env.PUBLIC_IP }}
           username: ubuntu  
           key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
           script: |
@@ -109,4 +108,5 @@ jobs:
             sudo docker rm myappcontainer || true
             sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
             sudo docker run -d --name myappcontainer -p 80:8080 $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
 
