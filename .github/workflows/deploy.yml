@@ -84,7 +84,12 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./nodeapp
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-        
+          
+      - name: Debug PUBLIC_IP
+        run: echo "PUBLIC_IP is $PUBLIC_IP"
+        env:
+          PUBLIC_IP: ${{ env.PUBLIC_IP }}
+       
       - name: Deploy image to EC2
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
