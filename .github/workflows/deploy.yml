@@ -98,10 +98,14 @@ jobs:
 
             sudo apt install docker.io -y
 
+            sudo usermod -aG docker $USER
+            sudo chmod 666 /var/run/docker.sock
+
             # Login to Amazon ECR
-            aws ecr get-login-password --region eu-central-1 | sudo docker login --username AWS --password-stdin $REGISTRY
+            aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 637423331444.dkr.ecr.eu-central-1.amazonaws.com
 
             # Stop and remove the existing container if it exists
+            
             sudo docker stop myappcontainer || true
             sudo docker rm myappcontainer || true
 
