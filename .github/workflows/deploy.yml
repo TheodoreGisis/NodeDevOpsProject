@@ -91,20 +91,24 @@ jobs:
           key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
           script: |
             sudo apt update
-              
-            sudo apt-get install curl -y
-            sudo apt-get install unzip
+            sudo apt-get install -y curl unzip
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
 
             sudo apt install docker.io -y
 
-            sudo $(aws ecr get-login --no-include-email --region eu-central-1)
-            
-            sudo docker stop myappcontainer || true
+            # Login to Amazon ECR
+            aws ecr get-login-password --region eu-central-1 | sudo docker login --username AWS --password-stdin $REGISTRY
 
+            # Stop and remove the existing container if it exists
+            sudo docker stop myappcontainer || true
             sudo docker rm myappcontainer || true
+
+            # Pull the latest image from ECR
             sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+            # Run the new container
             sudo docker run -d --name myappcontainer -p 80:8080 $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
 
