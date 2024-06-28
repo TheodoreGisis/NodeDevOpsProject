@@ -2,7 +2,7 @@ const express = require('express')
 
 const app = express()
 app.get("/",(req,res)=>{
-    res.send("Service is up and running")
+    res.send("Service is up and running from the new version")
 })
 
 
