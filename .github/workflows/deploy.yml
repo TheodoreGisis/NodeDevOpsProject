@@ -94,7 +94,7 @@ jobs:
           host: "35.157.81.116"
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
-          envs: AWS_SSH_KEY_PRIVATE,AWS_ACCESS_KEY_ID,AWS_SSH_KEY_PRIVATE,AWS_SSH_KEY_PUBLIC,AWS_REGION,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_DEFAULT_REGION
+          envs: AWS_SSH_KEY_PRIVATE,AWS_ACCESS_KEY_ID,AWS_SSH_KEY_PRIVATE,AWS_SSH_KEY_PUBLIC,AWS_REGION,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_DEFAULT_REGION,AWS_SECRET_ACCESS_KEY
 
 
           script: |
@@ -108,7 +108,7 @@ jobs:
 
             sudo usermod -aG docker $USER
             sudo chmod 666 /var/run/docker.sock
-            
+
             # Login to Amazon ECR
             aws ecr get-login-password --region eu-central-1 | sudo docker login --username AWS --password-stdin $REGISTRY
 
