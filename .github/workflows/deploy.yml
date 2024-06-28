@@ -84,11 +84,19 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Deploy image to EC2
+        env: 
+          REGISTRY: ${{steps.login-ecr.outputs.registry}}
+          REPOSITORY: example-node-app
+          IMAGE_TAG: ${{github.sha}}
+          AWS_DEFAULT_REGION: eu-central-1
         uses: appleboy/ssh-action@master
         with:
           host: "35.157.81.116"
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
+          envs: AWS_SSH_KEY_PRIVATE,AWS_ACCESS_KEY_ID,AWS_SSH_KEY_PRIVATE,AWS_SSH_KEY_PUBLIC,AWS_REGION,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_DEFAULT_REGION
+
+
           script: |
             sudo apt update
             sudo apt-get install -y curl unzip
@@ -100,12 +108,13 @@ jobs:
 
             sudo usermod -aG docker $USER
             sudo chmod 666 /var/run/docker.sock
-
+            
             # Login to Amazon ECR
-            aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 637423331444.dkr.ecr.eu-central-1.amazonaws.com
+            aws ecr get-login-password --region eu-central-1 | sudo docker login --username AWS --password-stdin $REGISTRY
 
             # Stop and remove the existing container if it exists
-
+            sudo docker stop myappcontainer || true
+            sudo docker rm myappcontainer || true
 
             # Pull the latest image from ECR
             sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
